@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Resolve::Hostname::VERSION
   spec.authors       = ["TAGOMORI Satoshi"]
   spec.email         = ["tagomoris@gmail.com"]
-  spec.description   = %q{With caching, selector for IPv4/IPv6, and other features}
+  spec.description   = %q{With caching, selector for IPv4/IPv6, and many other features}
   spec.summary       = %q{Hostname resolver with caching}
   spec.homepage      = "https://github.com/tagomoris/resolve-dns-cached"
   spec.license       = "MIT"
