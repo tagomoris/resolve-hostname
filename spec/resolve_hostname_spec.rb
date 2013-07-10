@@ -1,0 +1,92 @@
+require_relative './spec_helper'
+
+require 'resolve/hostname'
+
+describe Resolve::Hostname do
+  context 'initialized as near default' do
+    r = Resolve::Hostname.new(:ttl => 2, :resolver_ttl => 2)
+
+    describe '#primary_ip_version' do
+      it 'returns :ipv4' do
+        expect(r.primary_ip_version).to be(:ipv4)
+      end
+    end
+
+    describe '#secondary_ip_version' do
+      it 'returns :ipv6' do
+        expect(r.secondary_ip_version).to be(:ipv6)
+      end
+    end
+
+    describe '#primary_version_address?' do
+      context 'with valid IPv4 address' do
+        it 'returns true' do
+          expect(r.primary_version_address?('127.0.0.1')).to be_true
+        end
+      end
+
+      context 'with invalid IPv4 address' do
+        it 'returns false' do
+          expect{ r.primary_version_address?('256.256.256.256') }.to raise_error(IPAddr::InvalidAddressError)
+          expect{ r.primary_version_address?('256.256.256.0')   }.to raise_error(IPAddr::InvalidAddressError)
+          expect{ r.primary_version_address?('256.256.0.0')     }.to raise_error(IPAddr::InvalidAddressError)
+          expect{ r.primary_version_address?('256.0.0.0')       }.to raise_error(IPAddr::InvalidAddressError)
+          expect{ r.primary_version_address?('0.0.0.0') }.not_to raise_error()
+        end
+      end
+
+      context 'with IPv6 address' do
+        it 'returns false' do
+          expect(r.primary_version_address?('::1')).to be_false
+        end
+      end
+    end
+
+    describe '#resolv_instance' do
+      it 'returns instance newly instanciated instead of already expired' do
+        first = r.resolv_instance
+
+        r.resolver_expires = Time.now - 1
+
+        expect(r.resolv_instance).not_to be(first)
+      end
+    end
+
+    describe '#getaddress' do
+      it 'returns ipv4 address string for www.google.com' do
+        expect(r.getaddress('www.google.com')).to match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
+      end
+
+      it 'returns 192.0.43.10 for example.com' do
+        expect(r.getaddress('example.com')).to eq('192.0.43.10')
+      end
+
+      it 'returns same ruby object for second query' do
+        first = r.getaddress('google.com')
+        expect(r.getaddress('google.com')).to be(first)
+      end
+
+      it 'raise error for records non-existing' do
+        expect { r.getaddress('not-existing.example.com') }.to raise_error(Resolve::Hostname::NotFoundError)
+      end
+
+      it 'returns newly fetched object instead of expired cache' do
+        first = r.getaddress('www.example.com')
+
+        r.cache['www.example.com'].expires = Time.now - 1
+
+        expect(r.getaddress('www.example.com')).not_to be(first)
+      end
+
+      it 'returns 127.0.0.1 for localhost' do
+        expect(r.getaddress('localhost')).to eq('127.0.0.1')
+      end
+    end
+  end
+
+  context 'initialized as system resolver enabled'
+  context 'initialized with ipv6 primary'
+  context 'initialized as not permitted for secondary address version'
+
+  context 'initialized as not to raise NotFoundError'
+end
