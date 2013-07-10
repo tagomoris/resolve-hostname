@@ -81,7 +81,7 @@ module Resolve
       secondary = nil
 
       if @system_resolver_enabled
-        addr = resolve_builtin
+        addr = resolve_builtin(name)
         if addr
           return addr if primary_version_address?(addr)
           secondary = addr
