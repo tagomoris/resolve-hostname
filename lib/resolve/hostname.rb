@@ -94,6 +94,10 @@ module Resolve
         secondary ||= addr
       end
 
+      if secondary.nil? && @permit_secondary_address_version
+        secondary = resolve_resolv(name, secondary_ip_version)
+      end
+
       addr = resolve_magic(name)
       if addr
         return addr if primary_version_address?(addr)
