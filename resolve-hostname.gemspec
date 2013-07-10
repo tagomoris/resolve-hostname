@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["tagomoris@gmail.com"]
   spec.description   = %q{With caching, selector for IPv4/IPv6, and many other features}
   spec.summary       = %q{Hostname resolver with caching}
-  spec.homepage      = "https://github.com/tagomoris/resolve-dns-cached"
+  spec.homepage      = "https://github.com/tagomoris/resolve-hostname"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
