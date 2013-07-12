@@ -81,6 +81,12 @@ describe Resolve::Hostname do
       it 'returns 127.0.0.1 for localhost' do
         expect(r.getaddress('localhost')).to eq('127.0.0.1')
       end
+
+      it 'returns address string itself for address string' do
+        expect(r.getaddress('127.0.0.1')).to eq('127.0.0.1')
+        expect(r.getaddress('::1')).to eq('::1')
+        expect(r.getaddress('192.168.0.1')).to eq('192.168.0.1')
+      end
     end
   end
 

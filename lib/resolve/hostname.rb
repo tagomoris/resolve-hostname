@@ -80,6 +80,15 @@ module Resolve
     def resolve(name)
       secondary = nil
 
+      is_address = false
+      begin
+        IPAddr.new(name)
+        is_address = true
+      rescue IPAddr::InvalidAddressError
+        # ignore
+      end
+      return name if is_address
+
       if @system_resolver_enabled
         addr = resolve_builtin(name)
         if addr
