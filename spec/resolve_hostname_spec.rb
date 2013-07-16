@@ -26,12 +26,27 @@ describe Resolve::Hostname do
       end
 
       context 'with invalid IPv4 address' do
-        it 'returns false' do
-          expect{ r.primary_version_address?('256.256.256.256') }.to raise_error(IPAddr::InvalidAddressError)
-          expect{ r.primary_version_address?('256.256.256.0')   }.to raise_error(IPAddr::InvalidAddressError)
-          expect{ r.primary_version_address?('256.256.0.0')     }.to raise_error(IPAddr::InvalidAddressError)
-          expect{ r.primary_version_address?('256.0.0.0')       }.to raise_error(IPAddr::InvalidAddressError)
-          expect{ r.primary_version_address?('0.0.0.0') }.not_to raise_error()
+        context 'in ruby 2.0.0 or later' do
+          if IPAddr.const_defined?('InvalidAddressError')
+            it 'raises IPAddr::InvalidAddressError' do
+              expect{ r.primary_version_address?('256.256.256.256') }.to raise_error(IPAddr::InvalidAddressError)
+              expect{ r.primary_version_address?('256.256.256.0')   }.to raise_error(IPAddr::InvalidAddressError)
+              expect{ r.primary_version_address?('256.256.0.0')     }.to raise_error(IPAddr::InvalidAddressError)
+              expect{ r.primary_version_address?('256.0.0.0')       }.to raise_error(IPAddr::InvalidAddressError)
+              expect{ r.primary_version_address?('0.0.0.0') }.not_to raise_error()
+            end
+          end
+        end
+        context 'in ruby 1.9.3 or earlier' do
+          unless IPAddr.const_defined?('InvalidAddressError')
+            it 'raises ArgumentError' do
+              expect{ r.primary_version_address?('256.256.256.256') }.to raise_error(ArgumentError)
+              expect{ r.primary_version_address?('256.256.256.0')   }.to raise_error(ArgumentError)
+              expect{ r.primary_version_address?('256.256.0.0')     }.to raise_error(ArgumentError)
+              expect{ r.primary_version_address?('256.0.0.0')       }.to raise_error(ArgumentError)
+              expect{ r.primary_version_address?('0.0.0.0') }.not_to raise_error()
+            end
+          end
         end
       end
 

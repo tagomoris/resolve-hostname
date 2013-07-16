@@ -50,6 +50,12 @@ module Resolve
 
       @resolver = nil
       @resolver_expires = nil
+
+      @invalid_address_error = if IPAddr.const_defined?('InvalidAddressError')
+                                 IPAddr::InvalidAddressError
+                               else
+                                 ArgumentError
+                               end
     end
 
     def getaddress(name)
@@ -84,7 +90,7 @@ module Resolve
       begin
         IPAddr.new(name)
         is_address = true
-      rescue IPAddr::InvalidAddressError
+      rescue @invalid_address_error => e
         # ignore
       end
       return name if is_address
