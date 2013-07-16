@@ -84,8 +84,14 @@ module Resolve
       begin
         IPAddr.new(name)
         is_address = true
-      rescue IPAddr::InvalidAddressError
-        # ignore
+      rescue => e
+        # Ruby 1.9.3
+        unless e.instance_of?(ArgumentError)
+          # Ruby 2.0.0
+          unless defined?(IPAddr::InvalidAddressError) and e.instance_of?(IPAddr::InvalidAddressError)
+            raise e
+          end
+        end
       end
       return name if is_address
 
