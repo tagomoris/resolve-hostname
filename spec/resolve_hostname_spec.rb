@@ -72,8 +72,9 @@ describe Resolve::Hostname do
         expect(r.getaddress('www.google.com')).to match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)
       end
 
-      it 'returns 192.0.43.10 for example.com' do
-        expect(r.getaddress('example.com')).to eq('192.0.43.10')
+      it 'returns IPv4 address for example.com' do
+        require 'ipaddr'
+        expect(IPAddr.new(r.getaddress('example.com')).ipv4?).to be_true
       end
 
       it 'returns same ruby object for second query' do
@@ -105,9 +106,9 @@ describe Resolve::Hostname do
     end
   end
 
-  context 'initialized as system resolver enabled'
-  context 'initialized with ipv6 primary'
-  context 'initialized as not permitted for secondary address version'
+  context 'initialized as system resolver enabled' #TODO
+  context 'initialized with ipv6 primary' #TODO
+  context 'initialized as not permitted for secondary address version' #TODO
 
-  context 'initialized as not to raise NotFoundError'
+  context 'initialized as not to raise NotFoundError' #TODO
 end
