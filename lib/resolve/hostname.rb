@@ -90,7 +90,7 @@ module Resolve
       begin
         IPAddr.new(name)
         is_address = true
-      rescue @invalid_address_error => e
+      rescue @invalid_address_error
         # ignore
       end
       return name if is_address
